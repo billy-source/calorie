@@ -1,63 +1,73 @@
-const form = document.getElementById('calorie-form');
-const foodNameInput = document.getElementById('food-name');
-const caloriesInput = document.getElementById('calories');
-const foodList = document.getElementById('food-list');
-const totalCaloriesDisplay = document.getElementById('total-calories');
-const resetBtn = document.getElementById('reset-btn');
+const form = document.getElementById("calorie-form");
+const foodNameInput = document.getElementById("food-name");
+const caloriesInput = document.getElementById("calories");
+const foodList = document.getElementById("food-list");
+const totalCaloriesDisplay = document.getElementById("total-calories");
+const resetBtn = document.getElementById("reset-btn");
 
-let foodItems = JSON.parse(localStorage.getItem('foodItems')) || [];
+// Store food items in an array
+let foodItems = [];
 
+// Function to render the food list and update total
 function renderFoodItems() {
-    foodList.innerHTML = '';
-    let total = 0;
-    foodItems.forEach((item, index) => {
-        total += item.calories;
-        const li = document.createElement('li');
-        li.className = "flex justify-between items-center px-4 py-2 rounded bg-gray-100";
-        const div = document.createElement('div');
-        div.innerHTML = `<strong>${item.name}</strong>- ${item.calories} calories`;
+  // Clear the existing list
+  foodList.innerHTML = "";
 
-        const btn = document.createElement('button');
-        btn.textContent = 'Delete';
-        btn.className = 'bg-red-500 text-white px-2 py-1 rounded';
-        btn.addEventListener('click', () => deleteItem(index));
+  let total = 0;
 
-        li.appendChild(div);
-        li.appendChild(btn);
-        foodList.appendChild(li);
-    });
-    totalCaloriesDisplay.textContent = total;
+  foodItems.forEach((item, index) => {
+    total += item.calories;
+
+    // Create list item
+    const li = document.createElement("li");
+    li.className =
+      "flex justify-between items-center bg-gray-100 px-4 py-2 rounded";
+
+    li.innerHTML = `
+      <div>
+        <strong>item.name</strong> -{item.calories} calories
+      </div>
+<button onclick="deleteItem(${index})"
+        class="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+        Delete
+      </button>
+    `;
+
+    foodList.appendChild(li);
+  });
+
+  // Update total calories display
+  totalCaloriesDisplay.textContent = total;
 }
 
-form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const foodName = foodNameInput.value.trim();
-    const calories = parseInt(caloriesInput.value.trim());
-    if (!foodName || isNaN(calories) || calories <= 0) {
-        alert('Please enter a valid food name and positive calorie amount.');
-        return;
-    }
-    foodItems.push({ name: foodName, calories });
-    localStorage.setItem('foodItems', JSON.stringify(foodItems));
-    form.reset();
-    renderFoodItems();
+// Add food to the list
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const name = foodNameInput.value.trim();
+  const calories = parseInt(caloriesInput.value);
+
+  if (!name || isNaN(calories) || calories <= 0) {
+    alert("Please enter a valid food name and calories.");
+    return;
+  }
+
+  foodItems.push({ name, calories });
+
+  form.reset();
+  renderFoodItems();
 });
+
+// Delete a food item
 function deleteItem(index) {
-    foodItems.splice(index, 1);
-    localStorage.setItem('foodItems', JSON.stringify(foodItems));
+  foodItems.splice(index, 1); // remove 1 item at the given index
+  renderFoodItems();
+}
+
+// Reset the whole list
+resetBtn.addEventListener("click", () => {
+  if (confirm("Are you sure you want to reset for the day?")) {
+    foodItems = [];
     renderFoodItems();
-resetBtn.addEventListener('click', () => {
-    if (confirm('Are you sure you want to reset all entries?')) {
-        foodItems = [];
-        localStorage.removeItem('foodItems');
-        renderFoodItems();
-    }
+  }
 });
-    }
-
-renderFoodItems();
-
-// Uncomment and define setCookie/getCookie if you want to use cookies for persistence
-// setCookie('foodItems', JSON.stringify(foodItems), 2);
-// getCookie('foodItems');
-// JSON.parse(getCookie('foodItems'));
