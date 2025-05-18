@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calorie Counter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+
+  <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
+    <h1 class="text-3xl font-bold text-center text-green-600 mb-4">Calorie Counter</h1>
+
+    <!-- Input Form -->
+    <form id="calorie-form" class="flex flex-col md:flex-row items-center gap-4 mb-6">
+      <input
+        type="text"
+        id="food-name"
+        placeholder="Food Name"
+        class="w-full md:w-1/2 border border-gray-300 rounded px-4 py-2"
+        required
+      />
+      <input
+        type="number"
+        id="calories"
+        placeholder="Calories"
+        class="w-full md:w-1/3 border border-gray-300 rounded px-4 py-2"
+        required
+      />
+   <button
+        type="submit"
+        class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+      >
+        Add Food
+      </button>
+    </form>
+    <ul id="food-list" class="space-y-3 mb-6">
+      <!-- JS will populate this list -->
+    </ul>
+
+    <!-- Total Calories -->
+    <div class="text-center text-xl font-semibold">
+      Total Calories: <span id="total-calories" class="text-green-600">0</span>
+    </div>
+
+    <!-- Reset Button -->
+    <div class="text-center mt-6">
+      <button
+        id="reset-btn"
+        class="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600"
+      >
+        Reset
+      </button>
+    </div>
+  </div>
+
+</body>
+</html>
