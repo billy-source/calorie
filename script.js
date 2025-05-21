@@ -4,6 +4,33 @@ const caloriesInput = document.getElementById("calories");
 const foodList = document.getElementById("food-list");
 const totalCaloriesDisplay = document.getElementById("total-calories");
 const resetBtn = document.getElementById("reset-btn");
+const foodForm = document.getElementById("calorie-form");
+const message = document.getElementById("message");
+
+async function fetchCalories(foodName) {
+  let url = 'https://api.calorieninjas.com/v1/nutrition?query=' + encodeURIComponent(foodName);
+  try{
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'X-Api-Key': 'O9psxgqP7VhXHZSr+RLB5A==Q3h7mCgeZ9rBM0a7',
+      'Content-Type': 'application/json'
+    }
+  });
+  if (!response.ok) {
+    throw new Error('Network response was not ok ');
+  }
+  const result = await response.json();
+  return result.items.map(item => ({
+    name: item.name,
+    calories: item.calories
+  }));
+}
+  catch (error) {
+  console.error(error);
+  return [];
+  }
+}
 
 // === COOKIE FUNCTIONS === //
 function setCookie(name, value, days) {
@@ -58,20 +85,29 @@ function renderFoodItems() {
 }
 
 // === FORM SUBMIT === //
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  const name = foodNameInput.value.trim();
-  const calories = parseInt(caloriesInput.value);
-
-  if (!name || isNaN(calories) || calories <= 0) {
-    alert("Please enter a valid food name and calorie number.");
-    return;
-  }
-
-  foodItems.push({ name, calories });
-  form.reset();
-  renderFoodItems();
+foodForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const foodName = document.getElementById("food-name").value.trim();
+    if (foodName) {
+        message.textContent = "Item added successfully!";
+        message.style.color = "green";
+        setTimeout(() => {
+            message.textContent = "";
+        }, 2000);
+        const data = await fetchCalories(foodName);
+        while (data.length > 0) {
+            foodItems.push(data[0]);
+            data.shift();
+        }
+        localStorage.setItem('foodItems', JSON.stringify(foodItems));
+        renderFoodItems();
+    } else {
+        message.textContent = "Invalid input";
+        message.style.color = "red";
+        setTimeout(() => {
+            message.textContent = "";
+        }, 2000);
+    }
 });
 
 // === DELETE FUNCTION === //
@@ -80,7 +116,7 @@ function deleteItem(index) {
   renderFoodItems();
 }
 
-// === RESET FUNCTION === //
+
 resetBtn.addEventListener("click", () => {
   if (confirm("Are you sure you want to reset for the day?")) {
     foodItems = [];
@@ -90,3 +126,7 @@ resetBtn.addEventListener("click", () => {
 
 renderFoodItems();
 
+
+
+
+ 
