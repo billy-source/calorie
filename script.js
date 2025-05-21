@@ -75,7 +75,7 @@ function renderFoodItems() {
     `;
 
     foodList.appendChild(li);
-    total += item.calories;
+    total += Number(item.calories);
   });
 
   totalCaloriesDisplay.textContent = total;
@@ -99,7 +99,6 @@ foodForm.addEventListener("submit", async (e) => {
             foodItems.push(data[0]);
             data.shift();
         }
-        localStorage.setItem('foodItems', JSON.stringify(foodItems));
         renderFoodItems();
     } else {
         message.textContent = "Invalid input";
