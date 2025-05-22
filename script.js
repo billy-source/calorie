@@ -1,11 +1,9 @@
-const form = document.getElementById("calorie-form");
 const foodNameInput = document.getElementById("food-name");
-const caloriesInput = document.getElementById("calories");
 const foodList = document.getElementById("food-list");
 const totalCaloriesDisplay = document.getElementById("total-calories");
 const resetBtn = document.getElementById("reset-btn");
 const foodForm = document.getElementById("calorie-form");
-const message = document.getElementById("message");
+const resetMessage = document.getElementById("reset-message");
 
 async function fetchCalories(foodName) {
   let url = 'https://api.calorieninjas.com/v1/nutrition?query=' + encodeURIComponent(foodName);
@@ -89,22 +87,19 @@ foodForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const foodName = document.getElementById("food-name").value.trim();
     if (foodName) {
-        message.textContent = "Item added successfully!";
-        message.style.color = "green";
+        resetMessage.textContent = "Item added successfully!";
+        resetMessage.style.color = "green";
         setTimeout(() => {
-            message.textContent = "";
+            resetMessage.textContent = "";
         }, 2000);
         const data = await fetchCalories(foodName);
-        while (data.length > 0) {
-            foodItems.push(data[0]);
-            data.shift();
-        }
+        data.forEach(item => foodItems.push(item));
         renderFoodItems();
     } else {
-        message.textContent = "Invalid input";
-        message.style.color = "red";
+        resetMessage.textContent = "Invalid input";
+        resetMessage.style.color = "red";
         setTimeout(() => {
-            message.textContent = "";
+            resetMessage.textContent = "";
         }, 2000);
     }
 });
@@ -114,6 +109,9 @@ function deleteItem(index) {
   foodItems.splice(index, 1);
   renderFoodItems();
 }
+
+// Attach deleteItem to the global scope so inline onclick works
+window.deleteItem = deleteItem;
 
 
 resetBtn.addEventListener("click", () => {
